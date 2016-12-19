@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Sponsored Thingy Options</title>
+</head>
+
+<body>
+	<div>
+		color: <button id="color"
+    			class="jscolor {valueElement:null,value:'ea0000'}"
+    			style="width:50px; height:20px;"></button>
+	</div>
+	<div>
+		<label for="fader">Sponsored Posts Opacity _______</label>
+		<input  type="range" min="0" max="100" value="30" id="fader" 
+			step="1" >
+		<output for="fader" id="opacity">30</output>
+	</div>
+
+	<div>	
+		<div id="status"></div>
+		<button id="save">Save</button>
+	</div>
+
+	<script src="options.js"></script>
+	<script src="jscolor.min.js"></script>
+</body>
+
+</html>
