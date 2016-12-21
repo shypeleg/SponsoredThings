@@ -7,6 +7,7 @@
 		var newDiv = document.createElement("div");
 		newDiv.style.backgroundColor = '#3b5998';
 		newDiv.style.padding = '10px';
+		newDiv.style.margin = '10px 0px';
 		newDiv.style.textAlign = 'center';
 		newDiv.style.color = 'white';
 		newDiv.style.cursor = "pointer";
@@ -35,19 +36,22 @@
 	}
 
 	function investigateAddedElement(el) {
-		if (el.nodeType === 1) {
+		if (el && el.nodeType === 1) {
 			var sponsoredLink = el.querySelector('.uiStreamSponsoredLink');
 			if (sponsoredLink) {
 				processSponsored(el);
-				// console.log(el);
+				console.log(el);
 			}
 		}
 	}
 
+	// test first (existing) 2 substeams
+	investigateAddedElement(document.getElementById('substream_0'));
+	investigateAddedElement(document.getElementById('substream_1'));
+
 	var observer = new MutationObserver(mutations => {
 		mutations.forEach(mutation => mutation.addedNodes.forEach(investigateAddedElement));
 	});
-
 	observer.observe(document.getElementById('contentArea'), { subtree: true, childList: true });
 
 } ());
