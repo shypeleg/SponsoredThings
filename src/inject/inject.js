@@ -1,6 +1,8 @@
 (function () {
 	var options = {
-		useMarker: true
+		useMarker: true,
+		hideLeftColumn: true,
+		hideRightColumn: true,
 	};
 
 	function createMarker(onClick) {
@@ -35,7 +37,7 @@
 		}
 	}
 
-	function investigateAddedElement(el) {
+	function investigateElement(el) {
 		if (el && el.nodeType === 1) {
 			var sponsoredLink = el.querySelector('.uiStreamSponsoredLink');
 			if (sponsoredLink) {
@@ -45,13 +47,32 @@
 		}
 	}
 
-	// test first (existing) 2 substeams
-	investigateAddedElement(document.getElementById('substream_0'));
-	investigateAddedElement(document.getElementById('substream_1'));
+	function investigateExistingSubsteams() {
+		// test first (existing) 2 substeams
+		investigateElement(document.getElementById('substream_0'));
+		investigateElement(document.getElementById('substream_1'));
+	}
 
-	var observer = new MutationObserver(mutations => {
-		mutations.forEach(mutation => mutation.addedNodes.forEach(investigateAddedElement));
-	});
-	observer.observe(document.getElementById('contentArea'), { subtree: true, childList: true });
+	function startObserving() {
+		var observer = new MutationObserver(mutations => {
+			mutations.forEach(mutation => mutation.addedNodes.forEach(investigateElement));
+		});
+		observer.observe(document.getElementById('contentArea'), { subtree: true, childList: true });
+	}
 
+	function hideColumns() {
+		if (options.hideLeftColumn) {
+			const leftCol = document.getElementById('leftCol');
+			leftCol.classList.add('dimmed');
+		}
+		if (options.hideRightColumn) {
+			const rightCol = document.getElementById('rightCol');
+			rightCol.classList.add('dimmed');
+		}
+	}
+
+	// initializing //
+	hideColumns();
+	investigateExistingSubsteams();
+	startObserving();
 } ());

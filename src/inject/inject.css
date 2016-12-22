@@ -1,0 +1,21 @@
+#leftCol.dimmed {
+	opacity: 0.2 !important;
+	transition:opacity 0.3s ease;
+}
+
+#leftCol.dimmed:hover {
+	opacity: 1 !important;
+}
+
+#rightCol.dimmed {
+	opacity: 0.2 !important;
+	transition:opacity 0.3s ease;
+}
+
+#rightCol.dimmed:hover {
+	opacity: 1 !important;
+}
+
+.mbm {
+    margin-bottom: 80px !important;
+}
