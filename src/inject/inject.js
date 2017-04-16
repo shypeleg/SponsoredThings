@@ -1,9 +1,36 @@
+
 (function () {
 	var options = {
-		useMarker: true,
-		hideLeftColumn: true,
-		hideRightColumn: true,
+		useMarker: false,
+		hideLeftColumn: false,
+		hideRightColumn: false,
 	};
+
+	function upTo(el, minWidth, minHeight, maxWidth, maxHeight) {
+		var maxLevelsToSearch = 20;
+		let currentLevel = 0;
+		let theChosenElement = null;
+
+		while (el && 
+					el.parentNode && 
+					currentLevel < maxLevelsToSearch && 
+					el.clientWidth < maxWidth && 
+					el.clientHeight < maxHeight
+					) {
+
+			++currentLevel;
+			if (el.clientWidth > minWidth && el.clientHeight > minHeight)
+				theChosenElement = el;
+			el = el.parentNode;
+
+			
+		}
+		// console.log('start');
+		// console.log('el', el);
+		// console.log('theChosenElement', theChosenElement);
+		// console.log('end');
+		return theChosenElement;
+	}
 
 	function createMarker(onClick) {
 		var newDiv = document.createElement("div");
@@ -23,41 +50,53 @@
 	}
 
 	function toggleVisibility(el) {
-		el.style.display !== 'none' ? el.style.display = 'none' : el.style.display = null;
+		if (el.style)
+			el.style.display !== 'none' ? el.style.display = 'none' : el.style.display = null;
 	}
 
-	function processSponsored(el) {
-		if (options.useMarker) {
-			var post = el.childNodes[0]; // yes, it's only one child
-			var marker = createMarker(() => toggleVisibility(post));
-			el.insertBefore(marker, post);
-			toggleVisibility(post);
-		} else {
-			el.style.opacity = "0.3";
+	function processSponsored(sponsoredLink) {
+		let containingPost;
+		if (sponsoredLink.text.toLowerCase().includes('links')) {// taboola and friends
+			containingPost = upTo(sponsoredLink, 250, 250, 1200, 330);
+		}
+		else { // facebook ? mip
+			containingPost = upTo(sponsoredLink, 400, 400, 700, 700);
+		}
+		if (containingPost) {
+			if (options.useMarker) {
+				//var post = el.childNodes[0]; // yes, it's only one child
+				var marker = createMarker(() => toggleVisibility(containingPost));
+				containingPost.insertBefore(marker, containingPost.childNodes[0]);
+				toggleVisibility(containingPost);
+			} else {
+				containingPost.style.opacity = '0.2';
+			}
 		}
 	}
 
 	function investigateElement(el) {
-		if (el && el.nodeType === 1) {
-			var sponsoredLink = el.querySelector('.uiStreamSponsoredLink');
-			if (sponsoredLink) {
-				processSponsored(el);
-				console.log(el);
+		if (el && el.getElementsByTagName) {
+			var links = el.getElementsByTagName('a');
+			for (var i = 0, max = links.length; i < max; i++) {
+				if (links[i].text.toLowerCase().includes('sponsored')) {
+					processSponsored(links[i]);
+				}
 			}
 		}
 	}
 
 	function investigateExistingSubsteams() {
 		// test first (existing) 2 substeams
-		investigateElement(document.getElementById('substream_0'));
-		investigateElement(document.getElementById('substream_1'));
+		investigateElement(document);
+		//investigateElement(document.getElementById('substream_0'));
+		//investigateElement(document.getElementById('substream_1'));
 	}
 
 	function startObserving() {
 		var observer = new MutationObserver(mutations => {
 			mutations.forEach(mutation => mutation.addedNodes.forEach(investigateElement));
 		});
-		observer.observe(document.getElementById('contentArea'), { subtree: true, childList: true });
+		observer.observe(document, { subtree: true, childList: true, attributes: true });
 	}
 
 	function hideColumns() {
@@ -71,8 +110,14 @@
 		}
 	}
 
-	// initializing //
-	hideColumns();
-	investigateExistingSubsteams();
-	startObserving();
-} ());
+	function init() {
+		// initializing //
+		hideColumns();
+		investigateExistingSubsteams();
+		//setTimeout(investigateExistingSubsteams, 1000);
+		startObserving();
+	}
+	//
+	init();
+
+}());

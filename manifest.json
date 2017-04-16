@@ -1,12 +1,13 @@
 {
-  "name": "Highlighted Sponsored Things",
+  "name": "Expose Sponsored ads",
   "version": "0.0.1",
   "manifest_version": 2,
-  "description": "Helps notice what is sponsored and what is not",
+  "description": "Helps you notice what is sponsored and what is not",
   "homepage_url": "http://shypeleg.wixsite.com/imaginationportrayed",
   "icons": {
     "16": "icons/icon16.png",
-    "48": "icons/icon48.png",
+    "32": "icons/icon32.png",
+    "64": "icons/icon64.png",
     "128": "icons/icon128.png"
   },
   "default_locale": "en",
@@ -19,7 +20,7 @@
    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "options_page": "src/options/index.html",
   "browser_action": {
-    "default_icon": "icons/icon48.png",
+    "default_icon": "icons/icon64.png",
     "default_title": "Sponsored... is it now?",
     "default_popup": "src/browser_action/browser_action.html"
   },
@@ -37,7 +38,8 @@
       ],
       "css": [
         "src/inject/inject.css"
-      ]
+      ],
+      "run_at": "document_end"
     }
   ]
 }
