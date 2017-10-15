@@ -6,10 +6,9 @@
 		hideRightColumn: false,
 	};
 
-	function upTo(el, minWidth, minHeight, maxWidth, maxHeight) {
+	function upToSize(el, minWidth, minHeight, maxWidth, maxHeight) {
 		var maxLevelsToSearch = 20;
 		let currentLevel = 0;
-		let theChosenElement = null;
 
 		while (el && 
 					el.parentNode && 
@@ -19,17 +18,25 @@
 					) {
 
 			++currentLevel;
-			if (el.clientWidth > minWidth && el.clientHeight > minHeight)
-				theChosenElement = el;
+			if (el.clientWidth > minWidth && el.clientHeight > minHeight) {
+				return el;				
+			}
 			el = el.parentNode;
-
-			
 		}
-		// console.log('start');
-		// console.log('el', el);
-		// console.log('theChosenElement', theChosenElement);
-		// console.log('end');
-		return theChosenElement;
+	}
+
+	function upToElement(el, tagName, attrName, attrValue) {
+		var maxLevelsToSearch = 20;
+		let currentLevel = 0;
+
+		while (el && el.parentNode) {
+			++currentLevel;
+			const attr = el.attributes.getNamedItem(attrName);
+			if (el.tagName.toLowerCase() === tagName.toLowerCase() && attr && attr.name === attrName && attr.value === attrValue) {
+				return el;
+			}
+			el = el.parentNode;
+		}
 	}
 
 	function createMarker(onClick) {
@@ -57,10 +64,13 @@
 	function processSponsored(sponsoredLink) {
 		let containingPost;
 		if (sponsoredLink.text.toLowerCase().includes('links')) {// taboola and friends
-			containingPost = upTo(sponsoredLink, 250, 250, 1200, 330);
+			containingPost = upToSize(sponsoredLink, 250, 250, 1200, 330);
 		}
 		else { // facebook ? mip
-			containingPost = upTo(sponsoredLink, 400, 400, 700, 700);
+			containingPost = upToElement(sponsoredLink, 'div', 'data-testid', 'fbfeed_story');
+			if (!containingPost) {
+				containingPost = upToElement(sponsoredLink, 'div', 'id', 'pagelet_ego_pane');
+			}
 		}
 		if (containingPost) {
 			if (options.useMarker) {
