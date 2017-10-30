@@ -1,5 +1,4 @@
 
-
 function outputUpdate(opacity) {
     console.log("here here heree");
 	document.querySelector('#opacity').value = opacity;
